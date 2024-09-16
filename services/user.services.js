@@ -13,12 +13,26 @@ export const logout = async () => {
 };
 
 export const verifyAuth = async (token) => {
-  if (!token) {
-    throw new Error("Token is required for authentication");
+  try{
+    if (!token) {
+      throw new Error("Token is required for authentication");
+    }
+    const response = await api.get("/auth/user/protected", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return {status: 200, message: response.data.message, user: response.data.user, authorized: response.data.authorized};
+  }catch(error){
+    return {status: 400, message: error.response.data.message, user: null, authorized: false};
   }
-  return api.get("/auth/user/protected", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
 };
+
+export const preRegister = async (data) => {
+  return await api.post("auth/user/preRegister",data);
+};
+
+export const generateCode = async (email) => {  
+  return await api.post("auth/user/generateCode", { email }, { timeout: 10000 });
+}

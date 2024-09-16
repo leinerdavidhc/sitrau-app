@@ -20,7 +20,6 @@ export function Form() {
 
   const { login, isAuthenticated, checkAuth } = useAuthStore.getState();
 
-  // Verificar autenticación al cargar la pantalla
   useEffect(() => {
     const verifyAuthentication = async () => {
       await checkAuth(); 
@@ -59,7 +58,6 @@ export function Form() {
   };
 
   if (isLoading) {
-    // Mostrar un indicador de carga mientras se verifica la autenticación
     return (
       <View className="flex-1 justify-center items-center">
         <ActivityIndicator size="large" color="#FF5733" />

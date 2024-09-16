@@ -42,7 +42,6 @@ export default function Index() {
   const router = useRouter();
   const { checkAuth, isAuthenticated } = useAuthStore.getState();
 
-  // Verificar autenticación al cargar la pantalla
   useEffect(() => {
     const verifyAuthentication = async () => {
       await checkAuth();
@@ -53,15 +52,10 @@ export default function Index() {
   }, []);
 
   useEffect(() => {
-    const verifyAuth = async () => {
-      await checkAuth();
-      if (!isAuthenticated) {
-        router.push("/");
-      }
-    };
-
-    verifyAuth();
-  }, []); 
+    if (!isAuthenticated) {
+      router.replace("/");
+    }
+  }, [isAuthenticated]);
 
   
   if (isLoading) {

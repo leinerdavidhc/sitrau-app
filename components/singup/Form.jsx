@@ -9,26 +9,38 @@ import {
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
 import { useRouter, Link } from "expo-router";
-import { register } from "../../services/user.services";
+import { generateCode, preRegister } from "../../services/user.services";
+import useAuthStore from "../../stores/Auth.store";
 
 export function Form() {
   const [serverErrors, setServerErrors] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const {setRegistrationData,setCode}=useAuthStore.getState();
   const {
     control,
     handleSubmit,
     formState: { errors },
     setError,
+    reset
   } = useForm();
   const router = useRouter();
 
   const onSubmit = async (data) => {
     setServerErrors(null);
     try {
-      const response = await register(data);
+      setIsLoading(true);
+      const response = await preRegister(data);
 
+      
       if (response.status === 200) {
-        Alert.alert("Registro exitoso", "Se ha registrado exitosamente");
-        router.push("/");
+        setRegistrationData(data)
+        setIsLoading(false);
+        const codeResult = await generateCode(data.email)
+        if (codeResult.status === 200) {
+          setCode(codeResult.data.code)
+        }
+        router.push("/validate-code");
+        reset();
       }
     } catch (error) {
       const errorData = error.response.data;
@@ -42,9 +54,12 @@ export function Form() {
         Alert.alert(`Error al registrar:\n${error.response.data.error}`);        
         setServerErrors(error.response.data.error || "Error al registrar");
       }
+      setIsLoading(false);
     }
   };
-
+  if(isLoading){
+    return <ActivityIndicator size="large" color="#FF5733"/>
+  }
   return (
     <View className="w-full px-5 flex-col gap-y-5">
       <View className="w-full flex-col">

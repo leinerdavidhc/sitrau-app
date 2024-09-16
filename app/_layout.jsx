@@ -14,6 +14,10 @@ export default function Layout() {
           name="signup/index"
           options={{ headerShown: false }}
         />
+               <Stack.Screen
+          name="validate-code/index"
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="main/index"
           options={{
