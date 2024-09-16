@@ -1,10 +1,10 @@
-import { View, Text, ActivityIndicator } from "react-native";
+import { View, Text, ActivityIndicator,Pressable } from "react-native";
 import useAuthStore from "../../stores/Auth.store";
 import { useEffect,useState } from "react";
 import { useRouter } from "expo-router";
 export default function Profile() {
     const router = useRouter();
-  const { user, isAuthenticated,checkAuth } = useAuthStore.getState();
+  const { user, isAuthenticated,checkAuth,logout } = useAuthStore.getState();
   const [ loading, setLoading ] = useState(true);
 
   useEffect(() => {
@@ -21,6 +21,11 @@ export default function Profile() {
         router.push("/");
     }
   }, [isAuthenticated]);
+
+  const handleLogout = async () => {
+    await logout();
+    router.push("/");
+  };
 
   if (loading) {
     return (
@@ -41,6 +46,9 @@ export default function Profile() {
     return (
       <View className="flex-1 items-center justify-center">
         <Text>{user.name}</Text>
+        <Pressable className="bg-red-500" onPress={handleLogout}>
+          <Text className="text-white p-2 font-semibold">logout</Text>
+        </Pressable>
       </View>
     );
   }

@@ -61,7 +61,6 @@ const useAuthStore = create((set) => ({
 
   logout: async () => {
     try {
-      await logoutService();
       await SecureStore.deleteItemAsync("token");
       set({ token: null, isAuthenticated: false, user: null });
     } catch (error) {

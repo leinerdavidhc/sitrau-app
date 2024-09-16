@@ -46,6 +46,24 @@ export default function Layout() {
             headerTitle: 'Perfil',            
           }}
           />
+          <Stack.Screen
+          name="forgout/index"
+          options={{
+            headerTitle: 'Recuperar cuenta',            
+          }}
+          />
+           <Stack.Screen
+          name="forgout/change"
+          options={{
+            headerTitle: 'Recuperar cuenta',            
+          }}
+          />
+           <Stack.Screen
+          name="forgout/validate"
+          options={{
+            headerTitle: 'Recuperar cuenta',            
+          }}
+          />
       </Stack>
       <StatusBar style="dark"/>
     </SafeAreaProvider>

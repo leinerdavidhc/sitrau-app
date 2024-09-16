@@ -35,7 +35,7 @@ export function Form() {
       if (response.status === 200) {
         setRegistrationData(data)
         setIsLoading(false);
-        const codeResult = await generateCode(data.email)
+        const codeResult = await generateCode(data.email,"register")
         if (codeResult.status === 200) {
           setCode(codeResult.data.code)
         }

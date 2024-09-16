@@ -5,6 +5,7 @@ import { useRouter, Link } from "expo-router";
 import { Checkbox } from "../Checkbox";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import useAuthStore from "../../stores/Auth.store";
+import * as SecureStore from 'expo-secure-store';
 
 export function Form() {
   const {
@@ -12,6 +13,7 @@ export function Form() {
     handleSubmit,
     formState: { errors },
     setError,
+    setValue,
   } = useForm();
   const router = useRouter();
   const [isSelected, setSelection] = useState(false);
@@ -35,10 +37,38 @@ export function Form() {
     }
   }, [isAuthenticated]);
 
+  useEffect(() => {
+    const loadStoredData = async () => {
+      try {
+        const storedEmail = await SecureStore.getItemAsync('email');
+        const storedPassword = await SecureStore.getItemAsync('password');
+        const storedRememberMe = await SecureStore.getItemAsync('rememberMe');
+        
+        if (storedEmail) setValue('email', storedEmail);
+        if (storedPassword) setValue('password', storedPassword);
+        if (storedRememberMe !== null) setSelection(storedRememberMe === 'true');
+      } catch (error) {
+        console.error("Error loading stored data", error);
+      }
+    };
+
+    loadStoredData();
+  }, []);
+
   const onSubmit = async (data) => {
     try {
       const { email, password } = data;
       await login(email, password);
+
+      if (isSelected) {
+        await SecureStore.setItemAsync('email', email);
+        await SecureStore.setItemAsync('password', password);
+        await SecureStore.setItemAsync('rememberMe', 'true');
+      } else {
+        await SecureStore.deleteItemAsync('email');
+        await SecureStore.deleteItemAsync('password');
+        await SecureStore.deleteItemAsync('rememberMe');
+      }
     } catch (error) {
       const errorData = error.response?.data;
       if (error.response?.status === 400 && errorData?.errors) {
@@ -126,8 +156,8 @@ export function Form() {
       </View>
 
       <View className="flex-row justify-between items-center w-full">
-        <Checkbox label="Recuerdame" onValueChange={setSelection} />
-        <Link href={"/forgot"} className="text-orange-600 text-sm">
+        <Checkbox label="Recuerdame" onValueChange={setSelection} value={isSelected} />
+        <Link href={"/forgout"} className="text-orange-600 text-sm">
           ¿Has olvidado tu contraseña?
         </Link>
       </View>

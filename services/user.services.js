@@ -33,6 +33,15 @@ export const preRegister = async (data) => {
   return await api.post("auth/user/preRegister",data);
 };
 
-export const generateCode = async (email) => {  
-  return await api.post("auth/user/generateCode", { email }, { timeout: 10000 });
+export const generateCode = async (email, tipo) => {  
+  return await api.post("auth/user/generateCode", { email, tipo }, { timeout: 10000 });
+}
+
+//obtener un user por email servicio
+export const getUserByEmail = async (email) => {
+  return await api.get(`auth/user/getUserByEmail/${email}`);
+}
+
+export const changePassword = async (data) => {
+  return await api.post("auth/user/changePassword", data);
 }
