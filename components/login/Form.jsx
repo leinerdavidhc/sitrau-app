@@ -6,6 +6,7 @@ import { Checkbox } from "../Checkbox";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import useAuthStore from "../../stores/Auth.store";
 import * as SecureStore from 'expo-secure-store';
+import { err } from "react-native-svg";
 
 export function Form() {
   const {
@@ -19,6 +20,7 @@ export function Form() {
   const [isSelected, setSelection] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(true); 
+  const [serverErrors, setServerErrors] = useState(null);
 
   const { login, isAuthenticated, checkAuth } = useAuthStore.getState();
 
@@ -48,7 +50,8 @@ export function Form() {
         if (storedPassword) setValue('password', storedPassword);
         if (storedRememberMe !== null) setSelection(storedRememberMe === 'true');
       } catch (error) {
-        console.error("Error loading stored data", error);
+        setServerErrors(`Error loading stored data ${error}`)
+        console.log("Error loading stored data", error);
       }
     };
 
@@ -58,17 +61,20 @@ export function Form() {
   const onSubmit = async (data) => {
     try {
       const { email, password } = data;
-      await login(email, password);
+      const result = await login(email, password);
 
-      if (isSelected) {
-        await SecureStore.setItemAsync('email', email);
-        await SecureStore.setItemAsync('password', password);
-        await SecureStore.setItemAsync('rememberMe', 'true');
-      } else {
-        await SecureStore.deleteItemAsync('email');
-        await SecureStore.deleteItemAsync('password');
-        await SecureStore.deleteItemAsync('rememberMe');
+      if(result.status==200){
+        if (isSelected) {
+          await SecureStore.setItemAsync('email', email);
+          await SecureStore.setItemAsync('password', password);
+          await SecureStore.setItemAsync('rememberMe', 'true');
+        } else {
+          await SecureStore.deleteItemAsync('email');
+          await SecureStore.deleteItemAsync('password');
+          await SecureStore.deleteItemAsync('rememberMe');
+        }
       }
+
     } catch (error) {
       const errorData = error.response?.data;
       if (error.response?.status === 400 && errorData?.errors) {
@@ -78,11 +84,8 @@ export function Form() {
           setError(field, { type: "manual", message: error.message });
         });
       } else {
-        Alert.alert(
-          `Error al iniciar sesión:\n${
-            error.response?.data?.error || "Unknown error"
-          }`
-        );
+        Alert.alert(`Error al iniciar sesión:\n${error.response.data.error}`);
+        setServerErrors(error.response.data.error || "Error al iniciar sesión");
       }
     }
   };
@@ -161,7 +164,9 @@ export function Form() {
           ¿Has olvidado tu contraseña?
         </Link>
       </View>
-
+      {serverErrors && (
+        <Text className="text-red-500 text-sm my-2">{serverErrors}</Text>
+      )}
       <Pressable
         onPress={handleSubmit(onSubmit)}
         className="w-[80%] p-3 bg-orange-600 self-center rounded-md"

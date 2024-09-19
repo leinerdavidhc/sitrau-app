@@ -257,7 +257,7 @@ export function Form() {
         )}
       </View>
       {serverErrors && (
-        <Text className="text-red-500 text-sm mt-2">{serverErrors}</Text>
+        <Text className="text-red-500 text-sm my-2">{serverErrors}</Text>
       )}
 
       <Pressable

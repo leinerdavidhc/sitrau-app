@@ -19,10 +19,17 @@
       }
     },
     "android": {
+      "networkSecurityConfig": {
+        "cleartextTrafficPermitted": true
+      },
+      "permissions": [
+        "INTERNET"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.leinerhc.Sitrauapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -30,6 +37,11 @@
     "plugins": [
       "expo-router",
       "expo-secure-store"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "4d83dc80-ea68-4ac8-ad75-8a6b91b337a1"
+      }
+    }
   }
 }

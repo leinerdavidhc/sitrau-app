@@ -13,7 +13,7 @@ export function Checkbox({ label, onValueChange,value }) {
         const storedRememberMe = await SecureStore.getItemAsync('rememberMe');
         if (storedRememberMe !== null) setChecked(storedRememberMe === 'true');
       } catch (error) {
-        console.error("Error loading stored RememberMe", error);
+        console.log("Error loading stored RememberMe", error);
       }
     };
 

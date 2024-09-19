@@ -5,6 +5,7 @@ import { useWindowDimensions } from "react-native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import useAuthStore from "../../stores/Auth.store";
 import { useRouter } from "expo-router";
+import { Chat } from "../../components/chat/Chat";
 
 const renderScene = SceneMap({
   routes: () => (
@@ -18,9 +19,7 @@ const renderScene = SceneMap({
     </View>
   ),
   chat: () => (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Chat</Text>
-    </View>
+   <Chat/>
   ),
   validar: () => (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>

@@ -28,14 +28,13 @@ const useAuthStore = create((set) => ({
       }
       return false;
     } catch (error) {
-      console.error("Error en el registro", error);
+      console.log("Error en el registro", error);
       return false;
     }
   },
   
   login: async (email, password) => {
-    try {
-      const result = await loginService(email, password);
+    const result = await loginService(email, password);
       if (result.status === 200) {
         const { token } = result.data;
         await SecureStore.setItemAsync("token", token);
@@ -43,20 +42,20 @@ const useAuthStore = create((set) => ({
         // Fetch user data with the token
         const authResponse = await verifyAuth(token);
         if (authResponse.status === 200) {
-          Alert.alert("Login exitoso", "Has iniciado sesión correctamente");
           set({
             token,
             isAuthenticated: true,
             user: authResponse.user,
           });
+          Alert.alert("Login exitoso", "Has iniciado sesión correctamente");
+          return {status: 200, data: authResponse.data}
         }
+        return {status: 200, data: authResponse.data}
       } else {
         set({ token: null, isAuthenticated: false, user: null });
+        await SecureStore.deleteItemAsync("token");
+        return {status: 400}
       }
-    } catch (error) {
-      console.error("Login failed", error);
-      set({ isAuthenticated: false });
-    }
   },
 
   logout: async () => {
@@ -64,21 +63,25 @@ const useAuthStore = create((set) => ({
       await SecureStore.deleteItemAsync("token");
       set({ token: null, isAuthenticated: false, user: null });
     } catch (error) {
-      console.error("Logout failed", error);
+      console.log("Logout failed", error);
     }
   },
 
   checkAuth: async () => {
     try {
-      const token = await SecureStore.getItemAsync("token");
-      if (token) {
-        // Verify the token with the server
-        const authResponse = await verifyAuth(token);
-        if (authResponse.status === 200) {
+      const token = await SecureStore.getItemAsync("token");   
+      console.log("Check authentication token", token);
+        
+      if (token) {      
+        const response = await verifyAuth(token);     
+        if (response.status === 200) {
+          console.log("is check token true");
+          console.log("Check authentication response", response.data);
+          
           set({
             token,
             isAuthenticated: true,
-            user: authResponse.user,
+            user: response.data.user,
           });
         } else {
           set({ token: null, isAuthenticated: false, user: null });
@@ -86,10 +89,14 @@ const useAuthStore = create((set) => ({
         }
       } else {
         set({ token: null, isAuthenticated: false });
+        await SecureStore.deleteItemAsync("token");
       }
     } catch (error) {
-      console.error("Check authentication failed", error);
+      console.log("Check authentication failed", error);
+     
       set({ token: null, isAuthenticated: false });
+      await SecureStore.deleteItemAsync("token");
+      Alert.alert("Error al Autenticar usuario:\n", error.response.data.error);
     }
   },
 }));

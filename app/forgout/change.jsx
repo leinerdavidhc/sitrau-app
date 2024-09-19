@@ -25,14 +25,15 @@ export default function Change() {
         } catch (error) {
             const errorData = error.response?.data;
             if (error.response?.status === 400 && errorData?.errors) {
-                Alert.alert(`Error al registrar`);
+              
                 errorData.errors.forEach((error) => {
                     const field = Array.isArray(error.path) ? error.path[0] : error.path;
                     setError(field, { type: "manual", message: error.message });
                 });
+                Alert.alert(`Error al registrar`);
             } else {
-                Alert.alert(`Error al registrar:\n${error.response?.data?.error}`);
                 setServerErrors(error.response?.data?.error || "Error al registrar");
+                Alert.alert(`Error al registrar:\n${error.response?.data?.error}`);
             }
             setIsLoading(false);
         }
