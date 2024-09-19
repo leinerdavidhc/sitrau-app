@@ -6,12 +6,11 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import useAuthStore from "../../stores/Auth.store";
 import { useRouter } from "expo-router";
 import { Chat } from "../../components/chat/Chat";
+import { Main as MainRutas } from "../../components/bus/Main";
 
 const renderScene = SceneMap({
   routes: () => (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Rutas</Text>
-    </View>
+    <MainRutas/>
   ),
   colectivos: () => (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -77,7 +76,7 @@ export default function Index() {
             style={{
               fontWeight: "bold",
               fontSize: 14,
-              color: focused ? "red" : "gray",
+              color: focused ? "#ed500a" : "gray",
             }}
           >
             {route.title}
@@ -88,7 +87,7 @@ export default function Index() {
         <FontAwesome6
           name={route.icon}
           size={24}
-          color={focused ? "red" : "gray"}
+          color={focused ? "#ed500a" : "gray"}
         />
       )}
     />
